@@ -30,12 +30,19 @@ type Message struct {
 	Text string
 }
 
+type User struct {
+	ID        int
+	FirstName string
+	LastName  string
+}
+
 func main() {
 	// initialize Pulsar
 	initPulsar()
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/message/create", messageCreate)
+	mux.HandleFunc("/user/create", userCreate)
+	mux.HandleFunc("/user/list", listUsers)
 
 	err := http.ListenAndServe(":4000", mux)
 	log.Fatal(err)
@@ -82,7 +89,7 @@ func initPulsar() {
 	defer reader.Close()
 }
 
-func messageCreate(w http.ResponseWriter, r *http.Request) {
+func userCreate(w http.ResponseWriter, r *http.Request) {
 	// Declare a new Person struct.
 	var m Message
 
@@ -101,7 +108,7 @@ func messageCreate(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	fmt.Fprintf(w, "Message: %+v", m)
+	fmt.Fprintf(w, "User: %+v", m)
 
 }
 
@@ -180,4 +187,29 @@ func createReader(client pulsar.Client, ro pulsar.ReaderOptions) (pulsar.Reader,
 		Decryption:              ro.Decryption,
 	})
 	return reader, err
+}
+
+func listUsers(w http.ResponseWriter, r *http.Request) {
+	// set limit of 10
+	limit := 10
+	// create list of byte strings to hold users
+	var users []string
+	for reader.HasNext() {
+		msg, err := reader.Next(context.Background())
+		if err != nil {
+			log.Fatal(err)
+		}
+		// create User object from message
+		js, err := json.Marshal(msg.Payload())
+		if err != nil {
+			log.Fatal(err)
+		}
+		users = append(users, string(js))
+		// check if we have reached the limit
+		if len(users) == limit {
+			break
+		}
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(users)
 }
