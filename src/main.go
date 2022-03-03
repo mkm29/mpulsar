@@ -13,18 +13,13 @@ const (
 	SUBSCRIPTION_NAME = "test-sub"
 )
 
-type User struct {
-	ID        int
-	FirstName string
-	LastName  string
-	Email     string
-}
-
 var (
 	ro pulsar.ReaderOptions
 )
 
 func main() {
+	// initialize Pulsar variables
+	initializeVars()
 	// create HTTP server
 	mux := http.NewServeMux()
 	// Add handler for /user/list
@@ -44,5 +39,7 @@ func initializeVars() {
 	ro = pulsar.ReaderOptions{
 		Topic:          TOPIC_NAME,
 		StartMessageID: pulsar.EarliestMessageID(),
+		// MessageChannel:    make(chan pulsar.ConsumerMessage),
+		ReceiverQueueSize: 10,
 	}
 }

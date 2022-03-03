@@ -11,7 +11,6 @@ import (
 )
 
 func read(w http.ResponseWriter, r *http.Request) {
-	var users []string
 	client, err := pulsar.NewClient(pulsar.ClientOptions{URL: fmt.Sprintf("pulsar://%s:%d", PULSAR_URL, PULSAR_PORT)})
 	if err != nil {
 		log.Fatal(err)
@@ -30,14 +29,15 @@ func read(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Fatal(err)
 		}
-
-		// create User object from message
-		js, err := json.Marshal(msg.Payload())
+		fmt.Printf("Received message: %v\n", string(msg.Payload()))
+		var u User
+		err = json.Unmarshal(msg.Payload(), &u)
 		if err != nil {
 			log.Fatal(err)
 		}
-		users = append(users, string(js))
+		// print User object
+		fmt.Printf("Unmarshalled to User struct: %+v", u)
+		// send User struct to channel for processing
+		// users <- u
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(users)
 }

@@ -38,7 +38,7 @@ func publish(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	_, err = producer.Send(context.Background(), &pulsar.ProducerMessage{
-		Payload: []byte(js),
+		Payload: js,
 	})
 
 	defer producer.Close()
