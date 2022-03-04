@@ -6,13 +6,6 @@ import (
 	"github.com/apache/pulsar-client-go/pulsar"
 )
 
-const (
-	PULSAR_URL        = "54.211.97.53"
-	PULSAR_PORT       = 6650
-	TOPIC_NAME        = "users"
-	SUBSCRIPTION_NAME = "test-sub"
-)
-
 var (
 	ro pulsar.ReaderOptions
 )
@@ -23,9 +16,11 @@ func main() {
 	// create HTTP server
 	mux := http.NewServeMux()
 	// Add handler for /user/list
-	mux.HandleFunc("/user/list", read)
+	mux.HandleFunc("/locations/list", read)
 	// Add handler for publishing message
-	mux.HandleFunc("/user/create", publish)
+	mux.HandleFunc("/locations/create", publish)
+	// Create handler for geocode
+	mux.HandleFunc("/locations/geocode", geocode_http)
 
 	// Listen on port 8080
 	s := &http.Server{

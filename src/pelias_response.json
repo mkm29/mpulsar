@@ -1,0 +1,78 @@
+{
+    "geocoding": {
+      "version": "0.2",
+      "attribution": "http://localhost:4000/attribution",
+      "query": {
+        "text": "iah",
+        "size": 1,
+        "layers": [
+          "address"
+        ],
+        "private": false,
+        "lang": {
+          "name": "English",
+          "iso6391": "en",
+          "iso6393": "eng",
+          "via": "default",
+          "defaulted": true
+        },
+        "querySize": 20,
+        "parser": "pelias",
+        "parsed_text": {
+          "subject": "iah"
+        }
+      },
+      "engine": {
+        "name": "Pelias",
+        "author": "Mapzen",
+        "version": "1.0"
+      },
+      "timestamp": 1646409276886
+    },
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -95.3287,
+            29.994363
+          ]
+        },
+        "properties": {
+          "id": "us/tx/city_of_houston:2a402c99053a17f1",
+          "gid": "openaddresses:address:us/tx/city_of_houston:2a402c99053a17f1",
+          "layer": "address",
+          "source": "openaddresses",
+          "source_id": "us/tx/city_of_houston:2a402c99053a17f1",
+          "country_code": "US",
+          "name": "8100 Iah Cc",
+          "housenumber": "8100",
+          "street": "Iah Cc",
+          "postalcode": "77032",
+          "confidence": 1,
+          "match_type": "exact",
+          "accuracy": "point",
+          "country": "United States",
+          "country_gid": "whosonfirst:country:85633793",
+          "country_a": "USA",
+          "region": "Texas",
+          "region_gid": "whosonfirst:region:85688753",
+          "region_a": "TX",
+          "county": "Harris County",
+          "county_gid": "whosonfirst:county:102081111",
+          "county_a": "RR",
+          "locality": "Houston",
+          "locality_gid": "whosonfirst:locality:101725629",
+          "label": "8100 Iah Cc, Houston, TX, USA"
+        }
+      }
+    ],
+    "bbox": [
+      -95.3287,
+      29.994363,
+      -95.3287,
+      29.994363
+    ]
+  }
