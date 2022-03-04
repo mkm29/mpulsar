@@ -30,14 +30,14 @@ func read(w http.ResponseWriter, r *http.Request) {
 			log.Fatal(err)
 		}
 		fmt.Printf("Received message: %v\n", string(msg.Payload()))
-		var u User
-		err = json.Unmarshal(msg.Payload(), &u)
+		var m Message
+		err = json.Unmarshal(msg.Payload(), &m)
 		if err != nil {
 			log.Fatal(err)
 		}
 		// print User object
-		fmt.Printf("Unmarshalled to User struct: %+v", u)
-		// send User struct to channel for processing
-		// users <- u
+		fmt.Printf("Unmarshalled to Message struct: %+v", m)
+		// send Message struct to channel for processing
+		// messages <- m
 	}
 }

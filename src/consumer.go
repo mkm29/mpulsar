@@ -15,11 +15,7 @@ func subscribe() {
 
 	defer client.Close()
 
-	consumer, err := client.Subscribe(pulsar.ConsumerOptions{
-		Topic:            TOPIC_NAME,
-		SubscriptionName: SUBSCRIPTION_NAME,
-		Type:             pulsar.Shared,
-	})
+	consumer, err := client.Subscribe(co)
 
 	defer consumer.Close()
 

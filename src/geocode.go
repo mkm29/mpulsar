@@ -21,7 +21,7 @@ func geocode(s string) (error, Location) {
 	/*
 		Post request to Pelias API
 		Parse response
-		Complete missing fields in Location object (latitude and longitude)
+		Create Location object from response
 		Return Location
 	*/
 

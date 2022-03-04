@@ -7,7 +7,10 @@ import (
 )
 
 var (
-	ro pulsar.ReaderOptions
+	ro          pulsar.ReaderOptions
+	co          pulsar.ConsumerOptions
+	readChan    chan pulsar.ReaderMessage
+	consumeChan chan pulsar.ConsumerMessage
 )
 
 func main() {
@@ -31,10 +34,21 @@ func main() {
 }
 
 func initializeVars() {
+	// create a channel for reading messages
+	readChan = make(chan pulsar.ReaderMessage)
+	// create a channel for consuming messages
+	consumeChan = make(chan pulsar.ConsumerMessage)
 	ro = pulsar.ReaderOptions{
-		Topic:          TOPIC_NAME,
-		StartMessageID: pulsar.EarliestMessageID(),
-		// MessageChannel:    make(chan pulsar.ConsumerMessage),
+		Topic:             TOPIC_NAME,
+		StartMessageID:    pulsar.EarliestMessageID(),
+		MessageChannel:    readChan,
 		ReceiverQueueSize: 10,
 	}
+	co = pulsar.ConsumerOptions{
+		Topic:            TOPIC_NAME,
+		SubscriptionName: SUBSCRIPTION_NAME,
+		Type:             pulsar.Shared,
+		MessageChannel:   consumeChan,
+	}
+
 }

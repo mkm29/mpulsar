@@ -19,3 +19,7 @@ type Location struct {
 	PostalCode  int
 	Label       string
 }
+
+type Message struct {
+	Text string
+}

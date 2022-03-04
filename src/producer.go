@@ -11,11 +11,11 @@ import (
 
 func publish(w http.ResponseWriter, r *http.Request) {
 	// Declare a new User struct.
-	var u User
+	var m Message
 
 	// Try to decode the request body into the struct. If there is an error,
 	// respond to the client with the error message and a 400 status code.
-	de := json.NewDecoder(r.Body).Decode(&u)
+	de := json.NewDecoder(r.Body).Decode(&m)
 	if de != nil {
 		http.Error(w, de.Error(), http.StatusBadRequest)
 		return
@@ -32,7 +32,7 @@ func publish(w http.ResponseWriter, r *http.Request) {
 	})
 
 	// Decode User object to JSON
-	js, err := json.Marshal(u)
+	js, err := json.Marshal(m)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
