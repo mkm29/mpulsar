@@ -26,4 +26,8 @@ func subscribe() {
 
 	fmt.Printf("Received message msgId: %#v -- content: '%s'\n",
 		msg.ID(), string(msg.Payload()))
+	// Push message onto consumeChan
+	consumeChan <- pulsar.ConsumerMessage{Message: msg}
+	// Acknowledge message
+	consumer.Ack(msg)
 }

@@ -35,9 +35,9 @@ func read(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		// print User object
+		// print Message object
 		fmt.Printf("Unmarshalled to Message struct: %+v", m)
 		// send Message struct to channel for processing
-		// messages <- m
+		readChan <- pulsar.ReaderMessage{Message: msg}
 	}
 }
