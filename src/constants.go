@@ -6,4 +6,6 @@ const (
 	TOPIC_NAME        = "locations"
 	SUBSCRIPTION_NAME = "geocode-sub"
 	PELIAS_URL        = "http://localhost:4000/v1/search?text=%s&size=1&layers=address"
+	CASSANDRA_IP      = "localhost"
+	CASSANDRA_PORT    = 9042
 )
