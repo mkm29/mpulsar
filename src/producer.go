@@ -9,6 +9,10 @@ import (
 	"github.com/apache/pulsar-client-go/pulsar"
 )
 
+// func publish_http(w http.ResponseWriter, r *http.Request) {
+
+// }
+
 func publish(w http.ResponseWriter, r *http.Request) {
 	// Declare a new User struct.
 	var m Message

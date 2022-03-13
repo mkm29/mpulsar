@@ -2,7 +2,9 @@ package main
 
 import (
 	"net/http"
-	log "github.com/sirupsen/logrus"
+
+	logger "../pkg/log"
+
 	"github.com/apache/pulsar-client-go/pulsar"
 )
 
@@ -13,12 +15,9 @@ var (
 	consumeChan chan pulsar.ConsumerMessage
 )
 
-
 func main() {
-	// set up logging output
-	log.SetFormatter(&log.JSONFormatter{})
-	// set logging level (change to higher level when in production)
-	log.SetLevel(log.DebugLevel)
+	logger.Info("Starting smigPulsar Go service")
+
 	// initialize Pulsar variables
 	initializeVars()
 	// create HTTP server
@@ -43,17 +42,20 @@ func initializeVars() {
 	readChan = make(chan pulsar.ReaderMessage)
 	// create a channel for consuming messages
 	consumeChan = make(chan pulsar.ConsumerMessage)
-	ro = pulsar.Re aderOptions{
+	ro = pulsar.ReaderOptions{
 		Topic:             TOPIC_NAME,
 		StartMessageID:    pulsar.EarliestMessageID(),
 		MessageChannel:    readChan,
 		ReceiverQueueSize: 10,
 	}
+	// log ReaderOptions object
+	logger.Info("ReaderOptions: %+v", ro)
 	co = pulsar.ConsumerOptions{
 		Topic:            TOPIC_NAME,
 		SubscriptionName: SUBSCRIPTION_NAME,
 		Type:             pulsar.Shared,
 		MessageChannel:   consumeChan,
 	}
-
+	// log ConsumerOptions object
+	logger.Info("ConsumerOptions: %+v", co)
 }

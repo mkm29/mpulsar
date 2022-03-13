@@ -7,8 +7,9 @@ import (
 	"net/http"
 	"strconv"
 
+	logger "../pkg/log"
+
 	"github.com/mmcloughlin/geohash"
-	log "github.com/sirupsen/logrus"
 )
 
 func geocode_http(w http.ResponseWriter, r *http.Request) {
@@ -39,17 +40,17 @@ func geocode(s string) (error, Location) {
 	fmt.Printf("URL: %s\n", url)
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Errorln(err)
+		logger.Error(err)
 		return err, Location{}
 	}
 	if err != nil {
-		log.Errorln(err)
+		logger.Error(err)
 		return err, Location{}
 	}
 	// Extract JSON from body
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Errorln(err)
+		logger.Error(err)
 		return err, Location{}
 	}
 	defer resp.Body.Close()
@@ -62,7 +63,7 @@ func geocode(s string) (error, Location) {
 	var data map[string]interface{}
 	err = json.Unmarshal(body, &data)
 	if err != nil {
-		log.Errorln(err)
+		logger.Error(err)
 		return err, Location{}
 	}
 

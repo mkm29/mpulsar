@@ -3,7 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
+
+	logger "../pkg/log"
 
 	"github.com/apache/pulsar-client-go/pulsar"
 )
@@ -21,7 +22,7 @@ func subscribe() {
 
 	msg, err := consumer.Receive(context.Background())
 	if err != nil {
-		log.Error(err)
+		logger.Error(err)
 	}
 
 	fmt.Printf("Received message msgId: %#v -- content: '%s'\n",
