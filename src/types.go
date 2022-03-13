@@ -18,6 +18,7 @@ type Location struct {
 	CountryCode string
 	PostalCode  int
 	Label       string
+	Geohashes   []string
 }
 
 type Message struct {

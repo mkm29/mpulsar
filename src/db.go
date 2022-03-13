@@ -20,8 +20,8 @@ func connect(use_auth bool) (error, *gocql.Session) {
 	// use gocql to connect to Cassandra cluster
 
 	// create a cluster object
-	cluster := gocql.NewCluster("127.0.0.1")
-	cluster.Keyspace = "mortal_mint"
+	cluster := gocql.NewCluster(CASSANDRA_IP)
+	cluster.Keyspace = CASSANDRA_KEYSPACE
 	cluster.Consistency = gocql.Quorum
 	cluster.ProtoVersion = 4
 
@@ -100,4 +100,6 @@ func insert_data(session *gocql.Session, l Location) (error, bool) {
 		return err, false
 	}
 	return nil, true
+	// return the id of the inserted location
+
 }

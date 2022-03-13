@@ -7,6 +7,8 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/mmcloughlin/geohash"
 )
 
 func geocode_http(w http.ResponseWriter, r *http.Request) {
@@ -82,6 +84,12 @@ func geocode(s string) (error, Location) {
 	l.PostalCode, _ = strconv.Atoi(PostalCode)
 	l.Address = properties["housenumber"].(string) + " " + properties["street"].(string)
 	fmt.Printf("Location: \n%+v\n", l)
+
+	// Get geohashes from Location object
+	geo := geohash.Encode(l.Latitude, l.Longitude)
+	for i := 5; i < 12; i++ {
+		l.Geohashes = append(l.Geohashes, geo[:i])
+	}
 
 	return nil, l
 }
