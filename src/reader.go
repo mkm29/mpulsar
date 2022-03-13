@@ -20,20 +20,20 @@ func read(w http.ResponseWriter, r *http.Request) {
 
 	reader, err := client.CreateReader(ro)
 	if err != nil {
-		logger.Error(err)
+		logger.WithRequest(r).Error(err)
 	}
 	defer reader.Close()
 
 	for reader.HasNext() {
 		msg, err := reader.Next(context.Background())
 		if err != nil {
-			logger.Error(err)
+			logger.WithRequest(r).Error(err)
 		}
 		fmt.Printf("Received message: %v\n", string(msg.Payload()))
 		var m Message
 		err = json.Unmarshal(msg.Payload(), &m)
 		if err != nil {
-			logger.Error(err)
+			logger.WithRequest(r).Error(err)
 		}
 		// print Message object
 		fmt.Printf("Unmarshalled to Message struct: %+v", m)

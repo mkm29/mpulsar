@@ -16,8 +16,10 @@ func geocode_http(w http.ResponseWriter, r *http.Request) {
 	// Get query URL parameter string
 	s := r.URL.Query().Get("q")
 	err, l := geocode(s)
-	_ = err
-	_ = l
+	if err != nil {
+		logger.WithRequest(r).Error(err)
+	}
+	fmt.Printf("Location: %+v\n", l)
 }
 
 func geocode(s string) (error, Location) {
