@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"net/http"
 
-	logger "../pkg/log"
 	"github.com/apache/pulsar-client-go/pulsar"
+	logger "github.com/mkm29/mpulsar/pkg/log"
 )
 
 func read(w http.ResponseWriter, r *http.Request) {

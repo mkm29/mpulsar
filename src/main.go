@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	logger "../pkg/log"
+	logger "github.com/mkm29/mpulsar/pkg/log"
 
 	"github.com/apache/pulsar-client-go/pulsar"
 )
