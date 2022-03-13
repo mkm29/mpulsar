@@ -70,7 +70,22 @@ func geocode(s string) (error, Location) {
 	}
 
 	// Unmarshal JSON into Location object
-	var l Location
+	l := Location{}
+	l.populate(data)
+
+	// Get geohashes from Location object
+	geo := geohash.Encode(l.Latitude, l.Longitude)
+	for i := 5; i < 12; i++ {
+		l.Geohashes = append(l.Geohashes, geo[:i])
+	}
+
+	return nil, l
+}
+
+func (l *Location) populate(data map[string]interface{}) {
+	/*
+		Populate
+	*/
 	l.Latitude = data["features"].([]interface{})[0].(map[string]interface{})["geometry"].(map[string]interface{})["coordinates"].([]interface{})[0].(float64)
 	l.Longitude = data["features"].([]interface{})[0].(map[string]interface{})["geometry"].(map[string]interface{})["coordinates"].([]interface{})[1].(float64)
 	// extract properties from data
@@ -87,12 +102,4 @@ func geocode(s string) (error, Location) {
 	l.PostalCode, _ = strconv.Atoi(PostalCode)
 	l.Address = properties["housenumber"].(string) + " " + properties["street"].(string)
 	fmt.Printf("Location: \n%+v\n", l)
-
-	// Get geohashes from Location object
-	geo := geohash.Encode(l.Latitude, l.Longitude)
-	for i := 5; i < 12; i++ {
-		l.Geohashes = append(l.Geohashes, geo[:i])
-	}
-
-	return nil, l
 }

@@ -13,7 +13,7 @@ import (
 func read(w http.ResponseWriter, r *http.Request) {
 	client, err := pulsar.NewClient(pulsar.ClientOptions{URL: fmt.Sprintf("pulsar://%s:%d", PULSAR_URL, PULSAR_PORT)})
 	if err != nil {
-		logger.Error(err)
+		logger.WithRequest(r).Error(err)
 	}
 
 	defer client.Close()
