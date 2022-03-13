@@ -10,10 +10,10 @@ package main
 
 import (
 	"errors"
-	"log"
 	"os"
 
 	"github.com/gocql/gocql"
+	log "github.com/sirupsen/logrus"
 )
 
 func connect(use_auth bool) (error, *gocql.Session) {
@@ -31,12 +31,12 @@ func connect(use_auth bool) (error, *gocql.Session) {
 		// Get username and password from environment variables
 		password, ok := os.LookupEnv("CASSANDRA_PASSWORD")
 		if !ok {
-			log.Fatal("CASSANDRA_PASSWORD not set")
+			log.Error("CASSANDRA_PASSWORD not set")
 			missing_creds = true
 		}
 		username, ok := os.LookupEnv("CASSANDRA_USERNAME")
 		if !ok {
-			log.Fatal("CASSANDRA_USERNAME not set")
+			log.Error("CASSANDRA_USERNAME not set")
 			missing_creds = true
 		}
 		if !missing_creds {
@@ -52,7 +52,7 @@ func connect(use_auth bool) (error, *gocql.Session) {
 	// create session
 	session, err := cluster.CreateSession()
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
 		return err, nil
 	}
 	defer session.Close()
@@ -77,7 +77,7 @@ func create_table(session *gocql.Session) (error, bool) {
 	// execute the query
 	err := session.Query(sql).Exec()
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
 		return err, false
 	}
 	return nil, true
@@ -96,7 +96,7 @@ func insert_data(session *gocql.Session, l Location) (error, bool) {
 	err := session.Query(sql, l.Latitude, l.Longitude, l.Label).Exec()
 
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
 		return err, false
 	}
 	return nil, true

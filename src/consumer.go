@@ -21,7 +21,7 @@ func subscribe() {
 
 	msg, err := consumer.Receive(context.Background())
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
 	}
 
 	fmt.Printf("Received message msgId: %#v -- content: '%s'\n",
