@@ -13,7 +13,7 @@ import (
 	"os"
 
 	"github.com/gocql/gocql"
-	logger "github.com/mkm29/mpulsar/pkg/log"
+	logger "github.com/mkm29/mpulsar/pkg/logging"
 )
 
 func connect(use_auth bool) (error, *gocql.Session) {

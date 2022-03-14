@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/apache/pulsar-client-go/pulsar"
-	logger "github.com/mkm29/mpulsar/pkg/log"
+	logger "github.com/mkm29/mpulsar/pkg/logging"
 )
 
 // func publish_http(w http.ResponseWriter, r *http.Request) {

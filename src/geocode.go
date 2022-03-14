@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
-	logger "github.com/mkm29/mpulsar/pkg/log"
+	logger "github.com/mkm29/mpulsar/pkg/logging"
 
 	"github.com/mmcloughlin/geohash"
 )
