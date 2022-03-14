@@ -40,7 +40,7 @@ func publish(c *gin.Context) {
 		Topic: TOPIC_NAME,
 	})
 
-	// Decode User object to JSON
+	// Decode Message object to JSON
 	js, err := json.Marshal(m)
 	if err != nil {
 		logger.Log("ERROR", logger.WithRequest(c.Request), de)
