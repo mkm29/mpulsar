@@ -20,17 +20,18 @@ func Configure() {
 
 func Log(l string, args ...interface{}) {
 	levels := map[string]logrus.Level{
-		"DEBUG": logrus.TraceLevel,
-		"INFO":  logrus.InfoLevel,
-		"WARN":  logrus.WarnLevel,
-		"ERROR": logrus.ErrorLevel,
-		"FATAL": logrus.FatalLevel,
-		"TRACE": logrus.TraceLevel,
+		"PANIC": logrus.PanicLevel, // 0
+		"FATAL": logrus.FatalLevel, // 1
+		"ERROR": logrus.ErrorLevel, // 2
+		"WARN":  logrus.WarnLevel,  // 3
+		"INFO":  logrus.InfoLevel,  // 4
+		"DEBUG": logrus.DebugLevel, // 5
+		"TRACE": logrus.TraceLevel, // 6
 	}
 	// Check the log level from the environment variable
 	LOGLEVEL := utils.GetEnv("LOGLEVEL", "ERROR")
 	// if LOGLEVEL from environment is less than the level return and do not log
-	if levels[l] < levels[LOGLEVEL] {
+	if levels[l] > levels[LOGLEVEL] {
 		return
 	}
 	logger.Log(levels[l], args...)

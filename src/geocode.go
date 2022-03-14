@@ -23,6 +23,23 @@ func geocode_http(w http.ResponseWriter, r *http.Request) {
 	logger.Log("INFO", "Location: %+v", l)
 }
 
+// Get HTTP response from URL
+func get_http(url string) ([]byte, error) {
+	logger.Log("INFO", fmt.Sprintf("GET %s", url))
+	resp, err := http.Get(url)
+	if err != nil {
+		logger.Log("ERROR", err)
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logger.Log("ERROR", err)
+		return nil, err
+	}
+	return body, nil
+}
+
 func geocode(s string) (error, Location) {
 	/*
 		Post request to Pelias API
@@ -40,29 +57,21 @@ func geocode(s string) (error, Location) {
 	*/
 
 	url := fmt.Sprintf(PELIAS_URL, s)
-	logger.Log("INFO", "Geocoding, URL: %s", url)
-	resp, err := http.Get(url)
+	// call get_http to get the response
+	body, err := get_http(url)
 	if err != nil {
-		logger.Log("ERROR", err)
 		return err, Location{}
 	}
-	if err != nil {
-		logger.Log("ERROR", err)
-		return err, Location{}
-	}
-	// Extract JSON from body
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		logger.Log("ERROR", err)
-		return err, Location{}
-	}
-	defer resp.Body.Close()
 
 	// retrun if response Body is empty
 	if len(body) == 0 {
-		return nil, Location{}
+		// create Error object
+		err := fmt.Errorf("Empty response body")
+		logger.Log("ERROR", err)
+		return err, Location{}
 	}
 
+	// Unmarshal response body into PeliasResponse struct
 	var data map[string]interface{}
 	err = json.Unmarshal(body, &data)
 	if err != nil {
