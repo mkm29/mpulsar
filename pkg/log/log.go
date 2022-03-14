@@ -13,18 +13,21 @@ func configure() {
 	// set up logging output
 	logger.SetFormatter(&logrus.JSONFormatter{})
 	// set logging level (change to higher level when in production)
-	logger.SetLevel(logrus.DebugLevel)
+	logger.SetLevel(logrus.TraceLevel)
 }
 
 func Info(args ...interface{}) {
+	logger.SetLevel(logrus.InfoLevel)
 	logger.Info(args...)
 }
 
 func Debug(args ...interface{}) {
+	logger.SetLevel(logrus.DebugLevel)
 	logger.Debug(args...)
 }
 
 func Error(args ...interface{}) {
+	logger.SetLevel(logrus.ErrorLevel)
 	logger.Error(args...)
 }
 
