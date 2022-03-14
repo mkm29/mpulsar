@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 
+	"github.com/gin-gonic/gin"
 	logger "github.com/mkm29/mpulsar/pkg/logging"
 	"github.com/mkm29/mpulsar/pkg/utils"
 
@@ -25,22 +25,20 @@ func main() {
 
 	// initialize Pulsar variables
 	initializeVars()
-	// create HTTP server
-	mux := http.NewServeMux()
+	// create HTTP server with Gin
+	r := gin.Default()
+
 	// Add handler for /user/list
-	mux.HandleFunc("/locations/list", read)
+	r.GET("/locations/list", read)
+
 	// Add handler for publishing message
-	mux.HandleFunc("/locations/create", publish)
+	r.GET("/locations/create", publish)
 	// Create handler for geocode
-	mux.HandleFunc("/locations/geocode", geocode_http)
+	r.GET("/locations/geocode", geocode_http)
 
 	// Listen on port 8080
-	s := &http.Server{
-		Addr:    ":8080",
-		Handler: mux,
-	}
 	logger.Log("INFO", "Listening on port 8080")
-	s.ListenAndServe()
+	r.Run(":8080")
 }
 
 func initializeVars() {

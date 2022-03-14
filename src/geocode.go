@@ -7,18 +7,19 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/gin-gonic/gin"
 	logger "github.com/mkm29/mpulsar/pkg/logging"
 
 	"github.com/mmcloughlin/geohash"
 )
 
-func geocode_http(w http.ResponseWriter, r *http.Request) {
+func geocode_http(c *gin.Context) {
 	// Get query URL parameter string
-	s := r.URL.Query().Get("q")
+	s := c.Request.URL.Query().Get("q")
 	err, l := geocode(s)
 	if err != nil {
-		logger.WithRequest(r).Error(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		logger.WithRequest(c.Request).Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 	logger.Log("INFO", "Location: %+v", l)
 }
@@ -96,9 +97,7 @@ func (l *Location) populate(data map[string]interface{}) {
 	/*
 		Populate
 	*/
-	if LOGLEVEL == "INFO" {
-		logger.Log("INFO", "Populating Location object")
-	}
+	logger.Log("INFO", "Populating Location object")
 	coords := data["features"].([]interface{})[0].(map[string]interface{})["geometry"].(map[string]interface{})["coordinates"].([]interface{})
 	l.Latitude = coords[0].(float64)
 	l.Longitude = coords[1].(float64)
@@ -115,7 +114,5 @@ func (l *Location) populate(data map[string]interface{}) {
 	PostalCode := properties["postalcode"].(string)
 	l.PostalCode, _ = strconv.Atoi(PostalCode)
 	l.Address = properties["housenumber"].(string) + " " + properties["street"].(string)
-	if LOGLEVEL == "INFO" {
-		logger.Log("INFO", "Location object populated: %+v", l)
-	}
+	logger.Log("INFO", "Location object populated: %+v", l)
 }

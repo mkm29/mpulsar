@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/apache/pulsar-client-go/pulsar"
+	"github.com/gin-gonic/gin"
 	logger "github.com/mkm29/mpulsar/pkg/logging"
 )
 
@@ -14,18 +15,18 @@ import (
 
 // }
 
-func publish(w http.ResponseWriter, r *http.Request) {
+func publish(c *gin.Context) {
 	// Log request
-	logger.Log("INFO", logger.WithRequest(r))
+	logger.Log("INFO", logger.WithRequest(c.Request))
 	// Declare a new User struct.
 	var m Message
 
 	// Try to decode the request body into the struct. If there is an error,
 	// respond to the client with the error message and a 400 status code.
-	de := json.NewDecoder(r.Body).Decode(&m)
+	de := json.NewDecoder(c.Request.Body).Decode(&m)
 	if de != nil {
-		http.Error(w, de.Error(), http.StatusBadRequest)
-		logger.Log("ERROR", logger.WithRequest(r), de)
+		logger.Log("ERROR", logger.WithRequest(c.Request), de)
+		c.JSON(http.StatusBadRequest, gin.H{"error": de.Error()})
 		return
 	}
 
@@ -42,7 +43,7 @@ func publish(w http.ResponseWriter, r *http.Request) {
 	// Decode User object to JSON
 	js, err := json.Marshal(m)
 	if err != nil {
-		logger.Log("ERROR", logger.WithRequest(r), de)
+		logger.Log("ERROR", logger.WithRequest(c.Request), de)
 		return
 	}
 	_, err = producer.Send(context.Background(), &pulsar.ProducerMessage{
