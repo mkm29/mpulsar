@@ -18,8 +18,9 @@ func geocode_http(w http.ResponseWriter, r *http.Request) {
 	err, l := geocode(s)
 	if err != nil {
 		logger.WithRequest(r).Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	fmt.Printf("Location: %+v\n", l)
+	logger.Log("INFO", "Location: %+v", l)
 }
 
 func geocode(s string) (error, Location) {
@@ -39,22 +40,20 @@ func geocode(s string) (error, Location) {
 	*/
 
 	url := fmt.Sprintf(PELIAS_URL, s)
-	if LOGLEVEL == "INFO" {
-		logger.Info("Geocoding, URL: %s", url)
-	}
+	logger.Log("INFO", "Geocoding, URL: %s", url)
 	resp, err := http.Get(url)
 	if err != nil {
-		logger.Error(err)
+		logger.Log("ERROR", err)
 		return err, Location{}
 	}
 	if err != nil {
-		logger.Error(err)
+		logger.Log("ERROR", err)
 		return err, Location{}
 	}
 	// Extract JSON from body
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logger.Error(err)
+		logger.Log("ERROR", err)
 		return err, Location{}
 	}
 	defer resp.Body.Close()
@@ -67,7 +66,7 @@ func geocode(s string) (error, Location) {
 	var data map[string]interface{}
 	err = json.Unmarshal(body, &data)
 	if err != nil {
-		logger.Error(err)
+		logger.Log("ERROR", err)
 		return err, Location{}
 	}
 
@@ -89,7 +88,7 @@ func (l *Location) populate(data map[string]interface{}) {
 		Populate
 	*/
 	if LOGLEVEL == "INFO" {
-		logger.Info("Populating Location object")
+		logger.Log("INFO", "Populating Location object")
 	}
 	coords := data["features"].([]interface{})[0].(map[string]interface{})["geometry"].(map[string]interface{})["coordinates"].([]interface{})
 	l.Latitude = coords[0].(float64)
@@ -108,6 +107,6 @@ func (l *Location) populate(data map[string]interface{}) {
 	l.PostalCode, _ = strconv.Atoi(PostalCode)
 	l.Address = properties["housenumber"].(string) + " " + properties["street"].(string)
 	if LOGLEVEL == "INFO" {
-		logger.Info("Location object populated: %+v", l)
+		logger.Log("INFO", "Location object populated: %+v", l)
 	}
 }

@@ -15,6 +15,8 @@ import (
 // }
 
 func publish(w http.ResponseWriter, r *http.Request) {
+	// Log request
+	logger.Log("INFO", logger.WithRequest(r))
 	// Declare a new User struct.
 	var m Message
 
@@ -23,7 +25,7 @@ func publish(w http.ResponseWriter, r *http.Request) {
 	de := json.NewDecoder(r.Body).Decode(&m)
 	if de != nil {
 		http.Error(w, de.Error(), http.StatusBadRequest)
-		logger.WithRequest(r).Error(de)
+		logger.Log("ERROR", logger.WithRequest(r), de)
 		return
 	}
 
@@ -40,8 +42,7 @@ func publish(w http.ResponseWriter, r *http.Request) {
 	// Decode User object to JSON
 	js, err := json.Marshal(m)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		logger.WithRequest(r).Error(de)
+		logger.Log("ERROR", logger.WithRequest(r), de)
 		return
 	}
 	_, err = producer.Send(context.Background(), &pulsar.ProducerMessage{
@@ -52,7 +53,7 @@ func publish(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		fmt.Println("Failed to publish message", err)
-		logger.Error(err)
+		logger.Log("ERROR", err)
 	} else {
 		fmt.Println("Published message")
 	}

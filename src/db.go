@@ -18,6 +18,7 @@ import (
 
 func connect(use_auth bool) (error, *gocql.Session) {
 	// use gocql to connect to Cassandra cluster
+	logger.Log("INFO", "Connecting to Cassandra cluster")
 
 	// create a cluster object
 	cluster := gocql.NewCluster(CASSANDRA_IP)
@@ -27,16 +28,17 @@ func connect(use_auth bool) (error, *gocql.Session) {
 
 	// if use_auth is true, set the credentials
 	if use_auth {
+		logger.Log("INFO", "Using authentication")
 		missing_creds := false
 		// Get username and password from environment variables
 		password, ok := os.LookupEnv("CASSANDRA_PASSWORD")
 		if !ok {
-			logger.Error("CASSANDRA_PASSWORD not set")
+			logger.Log("ERROR", "CASSANDRA_PASSWORD not set")
 			missing_creds = true
 		}
 		username, ok := os.LookupEnv("CASSANDRA_USERNAME")
 		if !ok {
-			logger.Error("CASSANDRA_USERNAME not set")
+			logger.Log("ERROR", "CASSANDRA_USERNAME not set")
 			missing_creds = true
 		}
 		if !missing_creds {
@@ -52,7 +54,7 @@ func connect(use_auth bool) (error, *gocql.Session) {
 	// create session
 	session, err := cluster.CreateSession()
 	if err != nil {
-		logger.Error(err)
+		logger.Log("ERROR", err)
 		return err, nil
 	}
 	defer session.Close()
@@ -77,7 +79,7 @@ func create_table(session *gocql.Session) (error, bool) {
 	// execute the query
 	err := session.Query(sql).Exec()
 	if err != nil {
-		logger.Error(err)
+		logger.Log("ERROR", err)
 		return err, false
 	}
 	return nil, true
@@ -96,7 +98,7 @@ func insert_data(session *gocql.Session, l Location) (error, bool) {
 	err := session.Query(sql, l.Latitude, l.Longitude, l.Label).Exec()
 
 	if err != nil {
-		logger.Error(err)
+		logger.Log("ERROR", err)
 		return err, false
 	}
 	return nil, true

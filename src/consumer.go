@@ -10,6 +10,7 @@ import (
 )
 
 func subscribe() {
+	logger.Log("INFO", "Subscribing to topic")
 	client, err := pulsar.NewClient(pulsar.ClientOptions{
 		URL: fmt.Sprintf("pulsar://%s:%d", PULSAR_URL, PULSAR_PORT),
 	})
@@ -22,11 +23,11 @@ func subscribe() {
 
 	msg, err := consumer.Receive(context.Background())
 	if err != nil {
-		logger.Error(err)
+		logger.Log("ERROR", err)
+		return
 	}
 
-	fmt.Printf("Received message msgId: %#v -- content: '%s'\n",
-		msg.ID(), string(msg.Payload()))
+	logger.Log("INFO", fmt.Sprintf("Received message: %s", msg.Payload()))
 	// Push message onto consumeChan
 	consumeChan <- pulsar.ConsumerMessage{Message: msg}
 	// Acknowledge message

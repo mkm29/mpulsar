@@ -1,5 +1,6 @@
 # builder image
 FROM golang:1.17.7-alpine3.15 as builder
+ENV LOGLEVEL=DEBUG
 RUN mkdir /build
 ADD . /build/
 WORKDIR /build

@@ -5,30 +5,35 @@ import (
 	"net/http"
 
 	logrus "github.com/sirupsen/logrus"
+
+	"github.com/mkm29/mpulsar/pkg/utils"
 )
 
 var logger = logrus.New()
 
-func configure() {
+func Configure() {
 	// set up logging output
 	logger.SetFormatter(&logrus.JSONFormatter{})
 	// set logging level (change to higher level when in production)
 	logger.SetLevel(logrus.TraceLevel)
 }
 
-func Info(args ...interface{}) {
-	logger.SetLevel(logrus.InfoLevel)
-	logger.Info(args...)
-}
-
-func Debug(args ...interface{}) {
-	logger.SetLevel(logrus.DebugLevel)
-	logger.Debug(args...)
-}
-
-func Error(args ...interface{}) {
-	logger.SetLevel(logrus.ErrorLevel)
-	logger.Error(args...)
+func Log(l string, args ...interface{}) {
+	levels := map[string]logrus.Level{
+		"DEBUG": logrus.TraceLevel,
+		"INFO":  logrus.InfoLevel,
+		"WARN":  logrus.WarnLevel,
+		"ERROR": logrus.ErrorLevel,
+		"FATAL": logrus.FatalLevel,
+		"TRACE": logrus.TraceLevel,
+	}
+	// Check the log level from the environment variable
+	LOGLEVEL := utils.GetEnv("LOGLEVEL", "ERROR")
+	// if LOGLEVEL from environment is less than the level return and do not log
+	if levels[l] < levels[LOGLEVEL] {
+		return
+	}
+	logger.Log(levels[l], args...)
 }
 
 func WithConn(conn net.Conn) *logrus.Entry {
