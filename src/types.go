@@ -1,12 +1,5 @@
 package main
 
-type User struct {
-	ID        int
-	FirstName string
-	LastName  string
-	Email     string
-}
-
 type Location struct {
 	Confidence  float64
 	Latitude    float64
