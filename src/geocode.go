@@ -97,9 +97,9 @@ func geocode(s string) (error, *Location) {
 }
 
 func (l *Location) add_geohash() {
-	geo := geohash.Encode((*l).Latitude, (*l).Longitude)
+	geo := geohash.Encode(l.Latitude, l.Longitude)
 	for i := 5; i < 12; i++ {
-		(*l).Geohashes = append((*l).Geohashes, geo[:i])
+		l.Geohashes = append(l.Geohashes, geo[:i])
 	}
 	// publish to topic
 
@@ -111,20 +111,20 @@ func (l *Location) populate(data map[string]interface{}) {
 	*/
 	logger.Log("INFO", "Populating Location object")
 	coords := data["features"].([]interface{})[0].(map[string]interface{})["geometry"].(map[string]interface{})["coordinates"].([]interface{})
-	(*l).Latitude = coords[0].(float64)
-	(*l).Longitude = coords[1].(float64)
+	l.Latitude = coords[0].(float64)
+	l.Longitude = coords[1].(float64)
 	// extract properties from data
 	properties := data["features"].([]interface{})[0].(map[string]interface{})["properties"].(map[string]interface{})
 
 	// Populate Location object
-	(*l).Confidence = properties["confidence"].(float64)
-	(*l).Country = properties["country"].(string)
-	(*l).CountryCode = properties["country_code"].(string)
-	(*l).Label = properties["label"].(string)
-	(*l).City = properties["locality"].(string)
-	(*l).Region = properties["region"].(string)
+	l.Confidence = properties["confidence"].(float64)
+	l.Country = properties["country"].(string)
+	l.CountryCode = properties["country_code"].(string)
+	l.Label = properties["label"].(string)
+	l.City = properties["locality"].(string)
+	l.Region = properties["region"].(string)
 	PostalCode := properties["postalcode"].(string)
-	(*l).PostalCode, _ = strconv.Atoi(PostalCode)
-	(*l).Address = properties["housenumber"].(string) + " " + properties["street"].(string)
+	l.PostalCode, _ = strconv.Atoi(PostalCode)
+	l.Address = properties["housenumber"].(string) + " " + properties["street"].(string)
 	logger.Log("INFO", "Location object populated: %+v", l)
 }
