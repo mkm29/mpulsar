@@ -15,5 +15,5 @@ type Location struct {
 }
 
 type Message struct {
-	Text string
+	Payload string
 }
