@@ -99,7 +99,7 @@ func geocode(s string) (error, *Location) {
 func (l *Location) add_geohash() {
 	geo := geohash.Encode((*l).Latitude, l.Longitude)
 	for i := 5; i < 12; i++ {
-		(*l).Geohashes = append(l.Geohashes, geo[:i])
+		(*l).Geohashes = append((*l).Geohashes, geo[:i])
 	}
 	// publish to topic
 
