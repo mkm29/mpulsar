@@ -13,10 +13,13 @@ var (
 	co          pulsar.ConsumerOptions
 	readChan    chan pulsar.ReaderMessage
 	consumeChan chan pulsar.ConsumerMessage
+	LOGLEVEL    string = getEnv("LOGLEVEL", "INFO")
 )
 
 func main() {
-	logger.Info("Starting smigPulsar Go service")
+	if LOGLEVEL == "INFO" {
+		logger.Info("Starting smigPulsar Go service")
+	}
 
 	// initialize Pulsar variables
 	initializeVars()
@@ -38,6 +41,9 @@ func main() {
 }
 
 func initializeVars() {
+	if LOGLEVEL == "INFO" {
+		logger.Info("Initializing Pulsar variables")
+	}
 	// create a channel for reading messages
 	readChan = make(chan pulsar.ReaderMessage)
 	// create a channel for consuming messages
@@ -48,14 +54,18 @@ func initializeVars() {
 		MessageChannel:    readChan,
 		ReceiverQueueSize: 10,
 	}
-	// log ReaderOptions object
-	logger.Info("ReaderOptions: %+v", ro)
+	if LOGLEVEL == "INFO" {
+		// log ReaderOptions object
+		logger.Info("ReaderOptions: %+v", ro)
+	}
 	co = pulsar.ConsumerOptions{
 		Topic:            TOPIC_NAME,
 		SubscriptionName: SUBSCRIPTION_NAME,
 		Type:             pulsar.Shared,
 		MessageChannel:   consumeChan,
 	}
-	// log ConsumerOptions object
-	logger.Info("ConsumerOptions: %+v", co)
+	if LOGLEVEL == "INFO" {
+		// log ConsumerOptions object
+		logger.Info("ConsumerOptions: %+v", co)
+	}
 }

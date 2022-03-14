@@ -39,7 +39,9 @@ func geocode(s string) (error, Location) {
 	*/
 
 	url := fmt.Sprintf(PELIAS_URL, s)
-	fmt.Printf("URL: %s\n", url)
+	if LOGLEVEL == "INFO" {
+		logger.Info("Geocoding, URL: %s", url)
+	}
 	resp, err := http.Get(url)
 	if err != nil {
 		logger.Error(err)
@@ -86,8 +88,12 @@ func (l *Location) populate(data map[string]interface{}) {
 	/*
 		Populate
 	*/
-	l.Latitude = data["features"].([]interface{})[0].(map[string]interface{})["geometry"].(map[string]interface{})["coordinates"].([]interface{})[0].(float64)
-	l.Longitude = data["features"].([]interface{})[0].(map[string]interface{})["geometry"].(map[string]interface{})["coordinates"].([]interface{})[1].(float64)
+	if LOGLEVEL == "INFO" {
+		logger.Info("Populating Location object")
+	}
+	coords := data["features"].([]interface{})[0].(map[string]interface{})["geometry"].(map[string]interface{})["coordinates"].([]interface{})
+	l.Latitude = coords[0].(float64)
+	l.Longitude = coords[1].(float64)
 	// extract properties from data
 	properties := data["features"].([]interface{})[0].(map[string]interface{})["properties"].(map[string]interface{})
 
@@ -101,5 +107,7 @@ func (l *Location) populate(data map[string]interface{}) {
 	PostalCode := properties["postalcode"].(string)
 	l.PostalCode, _ = strconv.Atoi(PostalCode)
 	l.Address = properties["housenumber"].(string) + " " + properties["street"].(string)
-	fmt.Printf("Location: \n%+v\n", l)
+	if LOGLEVEL == "INFO" {
+		logger.Info("Location object populated: %+v", l)
+	}
 }
