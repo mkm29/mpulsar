@@ -1,5 +1,6 @@
 package main
 
+// Location struct
 type Location struct {
 	Confidence  float64
 	Latitude    float64
@@ -14,6 +15,7 @@ type Location struct {
 	Geohashes   []string
 }
 
+// Message type (used with Pub/Sub Pulsar)
 type Message struct {
 	Payload string
 }

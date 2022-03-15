@@ -15,7 +15,8 @@ var (
 	co          pulsar.ConsumerOptions
 	readChan    chan pulsar.ReaderMessage
 	consumeChan chan pulsar.ConsumerMessage
-	LOGLEVEL    string = utils.GetEnv("LOGLEVEL", "INFO")
+	// LOGLEVEL = level to use for logging
+	LOGLEVEL string = utils.GetEnv("LOGLEVEL", "INFO")
 )
 
 func main() {
