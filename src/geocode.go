@@ -15,7 +15,7 @@ import (
 func geocodeHTTP(c *gin.Context) {
 	// Get query URL parameter string
 	s := c.Request.URL.Query().Get("q")
-	err, l := geocode(s)
+	l, err := geocode(s)
 	if err != nil {
 		logger.WithRequest(c.Request).Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
