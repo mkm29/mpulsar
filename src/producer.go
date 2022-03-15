@@ -31,13 +31,13 @@ func publish(c *gin.Context) {
 	}
 
 	client, err := pulsar.NewClient(pulsar.ClientOptions{
-		URL: fmt.Sprint("pulsar://", PULSAR_URL, ":", PULSAR_PORT),
+		URL: fmt.Sprint("pulsar://", pulsarURL, ":", pulsarPort),
 	})
 
 	defer client.Close()
 
 	producer, err := client.CreateProducer(pulsar.ProducerOptions{
-		Topic: TOPIC_NAME,
+		Topic: topicName,
 	})
 
 	// Decode Message object to JSON

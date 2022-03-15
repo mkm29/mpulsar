@@ -12,7 +12,7 @@ import (
 	"github.com/mmcloughlin/geohash"
 )
 
-func geocode_http(c *gin.Context) {
+func geocodeHTTP(c *gin.Context) {
 	// Get query URL parameter string
 	s := c.Request.URL.Query().Get("q")
 	err, l := geocode(s)
@@ -20,11 +20,11 @@ func geocode_http(c *gin.Context) {
 		logger.WithRequest(c.Request).Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
-	logger.Log("INFO", "Location: %+v", l)
+	logger.Log("INFO", fmt.Sprintf("Location: %+v", l))
 }
 
 // Get HTTP response from URL
-func get_http(url string) ([]byte, error) {
+func getHTTP(url string) ([]byte, error) {
 	logger.Log("INFO", fmt.Sprintf("GET %s", url))
 	resp, err := http.Get(url)
 	if err != nil {
@@ -40,7 +40,7 @@ func get_http(url string) ([]byte, error) {
 	return body, nil
 }
 
-func geocode(s string) (error, *Location) {
+func geocode(s string) (*Location, error) {
 	/*
 		Post request to Pelias API
 		Parse response
@@ -56,11 +56,11 @@ func geocode(s string) (error, *Location) {
 
 	*/
 
-	url := fmt.Sprintf(PELIAS_URL, s)
+	url := fmt.Sprintf(peliasURL, s)
 	// call get_http to get the response
-	body, err := get_http(url)
+	body, err := getHTTP(url)
 	if err != nil {
-		return err, nil
+		return nil, err
 	}
 
 	// retrun if response Body is empty
@@ -68,7 +68,7 @@ func geocode(s string) (error, *Location) {
 		// create Error object
 		err := fmt.Errorf("Empty response body")
 		logger.Log("ERROR", err)
-		return err, nil
+		return nil, err
 	}
 
 	// Unmarshal response body into PeliasResponse struct
@@ -76,7 +76,7 @@ func geocode(s string) (error, *Location) {
 	err = json.Unmarshal(body, &data)
 	if err != nil {
 		logger.Log("ERROR", err)
-		return err, nil
+		return nil, err
 	}
 
 	// Unmarshal JSON into Location object
@@ -91,12 +91,12 @@ func geocode(s string) (error, *Location) {
 	 * The geohash metadata will be stored in a separate Cassandra table
 	 *
 	 */
-	l.add_geohash()
+	l.addGeohash()
 
-	return nil, l
+	return l, nil
 }
 
-func (l *Location) add_geohash() {
+func (l *Location) addGeohash() {
 	geo := geohash.Encode(l.Latitude, l.Longitude)
 	for i := 5; i < 12; i++ {
 		l.Geohashes = append(l.Geohashes, geo[:i])
@@ -126,5 +126,5 @@ func (l *Location) populate(data map[string]interface{}) {
 	PostalCode := properties["postalcode"].(string)
 	l.PostalCode, _ = strconv.Atoi(PostalCode)
 	l.Address = properties["housenumber"].(string) + " " + properties["street"].(string)
-	logger.Log("INFO", "Location object populated: %+v", l)
+	logger.Log("INFO", fmt.Sprintf("Location object populated: %+v", l))
 }

@@ -12,7 +12,7 @@ import (
 func subscribe() {
 	logger.Log("INFO", "Subscribing to topic")
 	client, err := pulsar.NewClient(pulsar.ClientOptions{
-		URL: fmt.Sprintf("pulsar://%s:%d", PULSAR_URL, PULSAR_PORT),
+		URL: fmt.Sprintf("pulsar://%s:%d", pulsarURL, pulsarPort),
 	})
 
 	defer client.Close()

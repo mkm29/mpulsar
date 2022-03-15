@@ -11,7 +11,7 @@ import (
 )
 
 func read(c *gin.Context) {
-	client, err := pulsar.NewClient(pulsar.ClientOptions{URL: fmt.Sprintf("pulsar://%s:%d", PULSAR_URL, PULSAR_PORT)})
+	client, err := pulsar.NewClient(pulsar.ClientOptions{URL: fmt.Sprintf("pulsar://%s:%d", pulsarURL, pulsarPort)})
 	if err != nil {
 		logger.WithRequest(c.Request).Error(err)
 	}

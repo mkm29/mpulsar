@@ -34,7 +34,7 @@ func main() {
 	// Add handler for publishing message
 	r.GET("/locations/create", publish)
 	// Create handler for geocode
-	r.GET("/locations/geocode", geocode_http)
+	r.GET("/locations/geocode", geocodeHTTP)
 
 	// Listen on port 8080
 	logger.Log("INFO", "Listening on port 8080")
@@ -48,15 +48,15 @@ func initializeVars() {
 	// create a channel for consuming messages
 	consumeChan = make(chan pulsar.ConsumerMessage)
 	ro = pulsar.ReaderOptions{
-		Topic:             TOPIC_NAME,
+		Topic:             topicName,
 		StartMessageID:    pulsar.EarliestMessageID(),
 		MessageChannel:    readChan,
 		ReceiverQueueSize: 10,
 	}
 	logger.Log("INFO", fmt.Sprintf("ReaderOptions: %+v", ro))
 	co = pulsar.ConsumerOptions{
-		Topic:            TOPIC_NAME,
-		SubscriptionName: SUBSCRIPTION_NAME,
+		Topic:            topicName,
+		SubscriptionName: subscriptionName,
 		Type:             pulsar.Shared,
 		MessageChannel:   consumeChan,
 	}

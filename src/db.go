@@ -16,33 +16,33 @@ import (
 	logger "github.com/mkm29/mpulsar/pkg/logging"
 )
 
-func connect(use_auth bool) (error, *gocql.Session) {
+func connect(useAuth bool) (*gocql.Session, error) {
 	// use gocql to connect to Cassandra cluster
 	logger.Log("INFO", "Connecting to Cassandra cluster")
 
 	// create a cluster object
-	cluster := gocql.NewCluster(CASSANDRA_IP)
-	cluster.Keyspace = CASSANDRA_KEYSPACE
+	cluster := gocql.NewCluster(cassandraIP)
+	cluster.Keyspace = cassandraKeyspace
 	cluster.Consistency = gocql.Quorum
 	cluster.ProtoVersion = 4
 
-	// if use_auth is true, set the credentials
-	if use_auth {
+	// if useAuth is true, set the credentials
+	if useAuth {
 		logger.Log("INFO", "Using authentication")
-		missing_creds := false
+		missingCreds := false
 		// Get username and password from environment variables
 		password, ok := os.LookupEnv("CASSANDRA_PASSWORD")
 		if !ok {
 			logger.Log("ERROR", "CASSANDRA_PASSWORD not set")
-			missing_creds = true
+			missingCreds = true
 		}
 		username, ok := os.LookupEnv("CASSANDRA_USERNAME")
 		if !ok {
 			logger.Log("ERROR", "CASSANDRA_USERNAME not set")
-			missing_creds = true
+			missingCreds = true
 		}
-		if !missing_creds {
-			return errors.New("CASSANDRA_USERNAME/PASSWORD not set"), nil
+		if !missingCreds {
+			return nil, errors.New("CASSANDRA_USERNAME/PASSWORD not set")
 		}
 
 		cluster.Authenticator = gocql.PasswordAuthenticator{
@@ -55,23 +55,23 @@ func connect(use_auth bool) (error, *gocql.Session) {
 	session, err := cluster.CreateSession()
 	if err != nil {
 		logger.Log("ERROR", err)
-		return err, nil
+		return nil, err
 	}
 	defer session.Close()
-	return nil, session
+	return session, nil
 
 }
 
-func create_table(session *gocql.Session) (error, bool) {
+func createTable(session *gocql.Session) (bool, error) {
 	// create a locations table in Cassandra
 	// with the following columns:
 	// id: UUID
 	// point: POINTTYPE
 	// metadata: TEXT
 	// PointType is only supported in DSE 6.7+
-	is_dse := true
+	isDse := true
 	var sql string
-	if is_dse {
+	if isDse {
 		sql = "CREATE TABLE IF NOT EXISTS locations (id uuid, point 'PointType', metadata text, PRIMARY KEY((id), point));"
 	} else {
 		sql = "CREATE TABLE IF NOT EXISTS locations (id uuid, latitude float, longitude float, metadata text, PRIMARY KEY((id), latitude, longitude));"
@@ -80,16 +80,16 @@ func create_table(session *gocql.Session) (error, bool) {
 	err := session.Query(sql).Exec()
 	if err != nil {
 		logger.Log("ERROR", err)
-		return err, false
+		return false, err
 	}
-	return nil, true
+	return true, nil
 }
 
-func insert_data(session *gocql.Session, l Location) (error, bool) {
+func insertData(session *gocql.Session, l Location) (bool, error) {
 	// insert a location into the locations table
-	is_dse := true
+	isDse := true
 	var sql string
-	if is_dse {
+	if isDse {
 		sql = "INSERT INTO locations (id, point, metadata) VALUES (uuid(), POINT(? ?), ?);"
 	} else {
 		sql = "INSERT INTO locations (id, latitude, longitude, metadata) VALUES (uuid, ?, ?, ?);"
@@ -99,9 +99,9 @@ func insert_data(session *gocql.Session, l Location) (error, bool) {
 
 	if err != nil {
 		logger.Log("ERROR", err)
-		return err, false
+		return false, err
 	}
-	return nil, true
+	return true, nil
 	// return the id of the inserted location
 
 }
