@@ -1,7 +1,5 @@
 # Hermes
 
-<img src="resources/assets/logo.png" alt="hermes" width="200"/>
-
 [![Go 1.19](https://img.shields.io/badge/Go-v1.18-blue)](https://golang.org/doc/go1.18)
 
 ```yaml
